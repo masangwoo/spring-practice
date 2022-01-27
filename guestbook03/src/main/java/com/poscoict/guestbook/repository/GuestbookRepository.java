@@ -1,4 +1,4 @@
-package com.poscoict.emaillist.repository;
+package com.poscoict.guestbook.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,22 +10,22 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.poscoict.emaillist.vo.EmaillistVo;
+import com.poscoict.guestbook.vo.GuestbookVo;
 
 @Repository
-public class EmaillistRepository {
-	public List<EmaillistVo> findAll() {
+public class GuestbookRepository {
+	public List<GuestbookVo> findAll() {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<EmaillistVo> result = new ArrayList<EmaillistVo>();
+		List<GuestbookVo> result = new ArrayList<GuestbookVo>();
 
 		try {
 
-			conn = getconnConnection();
+			conn = getConnection();
 
 			// 3. SQL 준비
-			String sql = "select no, first_name, last_name, email from emaillist order by no desc";
+			String sql = "select no, name, date_format(reg_date,'%Y/%m/%d %H:%i:%s') as reg_date, message from guestbook  order by no desc";
 			pstmt = conn.prepareStatement(sql);
 
 			// 4. 바인딩
@@ -34,16 +34,16 @@ public class EmaillistRepository {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				long no = rs.getLong(1);
-				String firstName = rs.getString(2);
-				String lastName = rs.getString(3);
-				String email = rs.getString(4);
+				int no = rs.getInt(1);
+				String name = rs.getString(2);
+				String reg_date = rs.getString(3);
+				String message = rs.getString(4);
 
-				EmaillistVo vo = new EmaillistVo();
+				GuestbookVo vo = new GuestbookVo();
 				vo.setNo(no);
-				vo.setFirstName(firstName);
-				vo.setLastName(lastName);
-				vo.setEmail(email);
+				vo.setName(name);
+				vo.setReg_date(reg_date);
+				vo.setMessage(message);
 
 				result.add(vo);
 			}
@@ -69,23 +69,23 @@ public class EmaillistRepository {
 		return result;
 	}
 
-	public boolean insert(EmaillistVo vo) {
+	public boolean insert(GuestbookVo vo) {
 		boolean result = false;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = getconnConnection();
+			conn = getConnection();
 			
 			// 3. SQL 준비
-			String sql = "insert into emaillist values(null, ?,?,?)";
+			String sql = "insert into guestbook values(null, ?,?,?, now())";
 			pstmt = conn.prepareStatement(sql);
 
 			// 4. 바인딩
-			pstmt.setString(1, vo.getFirstName());
-			pstmt.setString(2, vo.getLastName());
-			pstmt.setString(3, vo.getEmail());
+			pstmt.setString(1, vo.getName());
+			pstmt.setString(2, vo.getPassword());
+			pstmt.setString(3, vo.getMessage());
 			// 5. SQL 실행
 
 			result = pstmt.executeUpdate() == 1;
@@ -111,7 +111,49 @@ public class EmaillistRepository {
 		return result;
 	}
 
-	private Connection getconnConnection() throws SQLException{
+	public boolean delete(GuestbookVo vo) {
+		boolean result = false;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			
+			// 3. SQL 준비
+			String sql = "delete from guestbook where no= ? and password = ?";
+			pstmt = conn.prepareStatement(sql);
+
+			// 4. 바인딩
+			pstmt.setInt(1, vo.getNo());
+			pstmt.setString(2, vo.getPassword());
+			
+			// 5. SQL 실행
+
+			result = pstmt.executeUpdate() == 1;
+
+		} catch (SQLException e) {
+			System.out.print("error : " + e.getMessage());
+		} finally {
+			// 자원정리
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	private Connection getConnection() throws SQLException{
 		Connection conn =null;
 		try {
 			// 1. JDBC드라이버 로딩
