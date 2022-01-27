@@ -36,5 +36,8 @@
 		<property name="defaultEncoding" value="utf-8" />
 	</bean>	
 	
+	<!-- mvc url-resource mapping -->
+	<mvc:resources  mapping="/images/**" location="file:/upload_images/"/>
+	
 
 </beans>
