@@ -157,7 +157,7 @@ public class GuestbookRepository {
 		Connection conn =null;
 		try {
 			// 1. JDBC드라이버 로딩
-			Class.forName("com.mariadb.cj.jdbc.Driver");
+			Class.forName("org.mariadb.cj.jdbc.Driver");
 			// 2.연결하기
 			String url = "jdbc:mysql://192.168.0.47:3307/webdb?characterEncoding=UTF-8&serverTimezone=UTC";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
