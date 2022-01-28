@@ -12,8 +12,7 @@ public class MainApp {
 	public static void main(String[] args) {
 		ApplicationContext ac = 
 				new ClassPathXmlApplicationContext("config/applicationContext.xml");
-		
-		
+				
 		ProductService ps = ac.getBean(ProductService.class);
 		System.out.println(ps);
 		ProductVo vo = ps.find("TV");
