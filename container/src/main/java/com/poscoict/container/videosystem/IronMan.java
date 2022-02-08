@@ -1,8 +1,8 @@
 package com.poscoict.container.videosystem;
 
-public class ironMan implements DigitalVideoDisc {
+public class IronMan implements DigitalVideoDisc {
 	private String studio = "MARVEL";
-	private String title = "ironMan";
+	private String title = "IronMan";
 	
 	@Override
 	public void play() {
